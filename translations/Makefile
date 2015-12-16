@@ -1,4 +1,4 @@
-QMAKE_TARGET  = BestCamera
+QMAKE_TARGET  = StreamCam
 LUPDATE       = $(QNX_HOST)/usr/bin/lupdate
 LRELEASE      = $(QNX_HOST)/usr/bin/lrelease
 
