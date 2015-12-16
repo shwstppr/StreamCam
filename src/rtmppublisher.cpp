@@ -136,12 +136,12 @@ bool RTMPPublisher::initiate() {
     QObject::connect(mSocket,SIGNAL(bytesWritten(qint64)),
                 this,SLOT(on_mSocket_bytesWritten(qint64)));
     mSocket->connectToHost(this->mHost, this->mPort);
-    if(mSocket->waitForConnected(30*1000)) {
+    if(mSocket->waitForConnected(15*1000)) {
         qDebug()<<"Connection established!";
         return true;
     } else {
-        qDebug()<<"Couldn't connect!";
-        //Error signal here
+        qDebug()<<"Couldn't connect!"<<mSocket->error();
+        //Error signal here?
         return false;
     }
 }
@@ -163,7 +163,8 @@ void RTMPPublisher::start() {
     mLastReceivedFrameTS = 0;
     if(initiate()) {
         run();
-    }
+    } else
+        emit socketError(mSocket->error());
 }
 
 void RTMPPublisher::handshake() {
@@ -247,7 +248,6 @@ void RTMPPublisher::connect() {
     buffer[6] = (unsigned char) length;
     buffer[bufferLength - 2] = (unsigned char) (mApp.length() >> 8);
     buffer[bufferLength - 1] = (unsigned char) mApp.length();
-    qDebug()<<"Pinky"<<QString::fromUtf8(reinterpret_cast<char*>(buffer), 40);
     write(buffer, bufferLength);//    this.out.write(buffer);
     write(this->mApp.toUtf8());//    this.out.write(this.app.getBytes());
     write(bufferEnd, 3);//    this.out.write(bufferEnd);

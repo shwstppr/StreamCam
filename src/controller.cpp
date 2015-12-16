@@ -60,6 +60,8 @@ void Controller::on_mRTMPPublisher_socketError(const int error) {
         errorString += tr(" %1 closed the connection.").arg(mHost);
     else if(err == QAbstractSocket::ConnectionRefusedError)
         errorString += tr(" %1 refused connection.").arg(mHost);
+    else if(err == QAbstractSocket::SocketTimeoutError)
+        errorString += tr(" Connection to %1 timed out.").arg(mHost);
     setIsStreaming(false);
     emit publishError(errorString);
 }
