@@ -14,10 +14,10 @@
 # Compiled Translations
 */translations/*.qm
  
-/.settings/
-/.device/
-/.cproject/
-/.project/
+.settings/
+.device
+.cproject
+.project
 /arm/
 /x86/
 .metadata/*
