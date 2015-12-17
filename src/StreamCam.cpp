@@ -1324,7 +1324,7 @@ void StreamCam::constrainViewfinderAspectRatio()
             width = height * aspect;
     }
     mFwc->setMinWidth(width);
-    mFwc->setMaxWidth(height);
+    mFwc->setMaxWidth(width);
     mFwc->setMinHeight(height);
     mFwc->setMaxHeight(height);
     qDebug() << "resized viewfinder to" << width << "x" << height <<"to maintain aspect ratio" << aspect;
