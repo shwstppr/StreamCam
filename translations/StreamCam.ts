@@ -167,5 +167,13 @@
         <source>%1:%2:%3</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Light on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Light off</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

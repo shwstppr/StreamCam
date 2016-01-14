@@ -66,7 +66,8 @@ StreamCam::StreamCam(bb::cascades::Application *app) :
         mSwitchCameraTimer(NULL),
         mCameraResolutionsModel(NULL),
         mVideoBitrate(360),
-        mVideoFramerate(30.0)
+        mVideoFramerate(30.0),
+        mCameraHasVideoLight(false)
 {
     // NOTE: since we are passed the Application instance when constructed, we can just cache it for later.
     // if this code is eventually migrated into a custom control, then we would instead use Application::instance()
@@ -253,6 +254,30 @@ int StreamCam::switchCaptureCamera()
     return err;
 }
 
+int StreamCam::toggleCameraVideoLight()
+{
+    int err = EOK;
+    if((mState==StateVideoVf || mState==StateVideoCapture) && mCameraHasVideoLight) {
+        camera_videolightmode_t newMode = CAMERA_VIDEOLIGHT_ON;
+        if(mCameraVideoLightMode==CameraVideoLightOn) {
+            newMode = CAMERA_VIDEOLIGHT_OFF;
+        }
+        err = camera_config_videolight(mHandle,
+                                newMode);
+        if(err==CAMERA_EOK) {
+            if(newMode == CAMERA_VIDEOLIGHT_ON) {
+                mCameraVideoLightMode = CameraVideoLightOn;
+            } else
+                mCameraVideoLightMode = CameraVideoLightOff;
+            qDebug()<<"Toggled camera flash"<<newMode<<err;
+        } else {
+            qDebug()<<"Unable to toggle camera flash"<<newMode<<err;
+        }
+        emit cameraVideoLightModeChanged(mCameraVideoLightMode);
+    }
+    return err;
+}
+
 void StreamCam::onSwitchCameraTimerTimeout() {
     if(mSwitchingCamera && mState==StateVideoVf) {
         mStopViewfinder = false;
@@ -338,6 +363,8 @@ int StreamCam::closeCamera()
             mStatusThread = NULL;
         }
         qDebug() << "closing camera";
+        if(mCameraVideoLightMode==CameraVideoLightOn)
+            toggleCameraVideoLight();
         camera_close(mHandle);
         mHandle = CAMERA_HANDLE_INVALID;
     }
@@ -689,6 +716,10 @@ int StreamCam::stopRecording(bool isStopStreaming)
         if (err != EOK) {
             qDebug() << "failed to stop video recording. err " << err;
         }
+
+        if(mCameraVideoLightMode==CameraVideoLightOn)
+            toggleCameraVideoLight();
+
         qDebug()<<"Encoding stopped successfully"<<isStopStreaming;
         if(isStopStreaming)
             emit streamingStop();
@@ -1335,8 +1366,9 @@ int StreamCam::discoverCameraCapabilities()
 {
     // In this function, we will query and cache some core camera capabilities to use for later configuration.
     // 1. video?
-    // 2. video format, rotations, resolutions
-    // 3. video viewfinder format, rotations, resolutions
+    // 2. falsh??
+    // 3. video format, rotations, resolutions
+    // 4. video viewfinder format, rotations, resolutions
 
 
     // first check for video support
@@ -1345,6 +1377,14 @@ int StreamCam::discoverCameraCapabilities()
         mCanDoVideo = true;
     }
     emit canDoVideoChanged(mCanDoVideo);
+    // check for flash support
+    mCameraHasVideoLight = false;
+    if (camera_has_feature(mHandle, CAMERA_FEATURE_VIDEOLIGHT)) {
+        mCameraHasVideoLight = true;
+        mCameraVideoLightMode = CameraVideoLightOff;
+    }
+    emit cameraHasVideoLightChanged(mCameraHasVideoLight);
+    emit cameraVideoLightModeChanged(mCameraVideoLightMode);
 
     int err = EOK;
 

@@ -175,6 +175,17 @@ NavigationPane {
                 }
             },
             ActionItem {
+                id: toggleVideoLight
+                objectName: "toggleVideoLightButton"
+                title: Cam.cameraVideoLightMode==StreamCam.CameraVideoLightOff?qsTr("Light on"):qsTr("Light off")
+                imageSource: "asset:///icons/flash.png"
+                ActionBar.placement: ActionBarPlacement.OnBar
+                enabled: Cam.cameraHasVideoLight
+                onTriggered: {
+                    Cam.toggleCameraVideoLight();
+                }
+            },
+            ActionItem {
                 title: metaInfoContainer.visible?qsTr("Hide info"):qsTr("Show info")
                 ActionBar.placement: ActionBarPlacement.InOverflow
                 imageSource: metaInfoContainer.visible?"asset:///icons/hide.png":"asset:///icons/show.png"
@@ -295,7 +306,7 @@ NavigationPane {
         SystemDialog {
             id: dialog
         }
-    ]
+    ]    
     onCreationCompleted: {
         Cam.requestCameraSwitchabilityToggle.connect(mainWindow.toggleCameraSwitchability);
     }

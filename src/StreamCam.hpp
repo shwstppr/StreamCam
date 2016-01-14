@@ -101,6 +101,7 @@ public:
 
     Q_ENUMS(VfMode);
     Q_ENUMS(CameraUnit);
+    Q_ENUMS(CameraVideoLightMode);
 
     // an enum we can expose to QML
     enum CameraUnit {
@@ -123,6 +124,11 @@ public:
         StateMinimized
     };
 
+    enum CameraVideoLightMode {
+        CameraVideoLightOff = 0,
+        CameraVideoLightOn
+    };
+
     Q_PROPERTY(CameraUnit cameraUnit READ cameraUnit NOTIFY cameraUnitChanged);
     CameraUnit cameraUnit() const { return (CameraUnit)mUnit; }
 
@@ -134,6 +140,12 @@ public:
 
     Q_PROPERTY(bool hasRearCamera READ hasRearCamera NOTIFY hasRearCameraChanged)
     bool hasRearCamera() const { return mHasRearCamera; }
+
+    Q_PROPERTY(bool cameraHasVideoLight READ cameraHasVideoLight NOTIFY cameraHasVideoLightChanged)
+    bool cameraHasVideoLight() const { return mCameraHasVideoLight; }
+
+    Q_PROPERTY(CameraVideoLightMode cameraVideoLightMode READ cameraVideoLightMode NOTIFY cameraVideoLightModeChanged)
+    CameraVideoLightMode cameraVideoLightMode() const { return mCameraVideoLightMode; }
 
     Q_PROPERTY(bool canDoVideo READ canDoVideo NOTIFY canDoVideoChanged)
     bool canDoVideo() const { return mCanDoVideo; }
@@ -161,6 +173,9 @@ public:
 
     Q_INVOKABLE
     int switchCaptureCamera();
+
+    Q_INVOKABLE
+    int toggleCameraVideoLight();
 
     Q_INVOKABLE
     void debugVfSize();
@@ -197,6 +212,8 @@ signals:
     void vfModeChanged(VfMode);
     void hasFrontCameraChanged(bool);
     void hasRearCameraChanged(bool);
+    void cameraHasVideoLightChanged(bool);
+    void cameraVideoLightModeChanged(CameraVideoLightMode);
     void canDoVideoChanged(bool);
     void canCaptureChanged(bool);
     void suppressStartChanged(bool);
@@ -271,6 +288,8 @@ private:
     VfMode mResumeVfMode;
     bool mHasFrontCamera;
     bool mHasRearCamera;
+    bool mCameraHasVideoLight;
+    CameraVideoLightMode mCameraVideoLightMode;
     bool mCanDoVideo;
     bool mCanCapture;
     bool mCapturing;

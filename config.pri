@@ -40,6 +40,7 @@ config_pri_assets {
         $$quote($$BASEDIR/assets/SettingsSheet.qml) \
         $$quote($$BASEDIR/assets/SmallHeadingLabel.qml) \
         $$quote($$BASEDIR/assets/StreamCamSheet.qml) \
+        $$quote($$BASEDIR/assets/icons/flash.png) \
         $$quote($$BASEDIR/assets/icons/hide.png) \
         $$quote($$BASEDIR/assets/icons/ic_camera_mode.png) \
         $$quote($$BASEDIR/assets/icons/ic_rec_red.png) \
