@@ -23,4 +23,6 @@
 .metadata/*
 /.metadata/
 
+#BlackBerry World Binaries
+/AppWorld Uploaded/
 
